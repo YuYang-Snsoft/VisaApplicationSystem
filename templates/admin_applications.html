@@ -1,30 +1,62 @@
 {% extends 'base.html' %}
-{% block title %}Admin Panel{% endblock %}
+{% block title %}Admin - Applications{% endblock %}
+
 {% block content %}
-<h2>Visa Applications - Admin Panel</h2>
-<table>
-    <tr>
-        <th>ID</th><th>Name</th><th>Passport</th><th>Status</th><th>Submitted</th><th>Actions</th>
-    </tr>
+<h2 class="mb-4">Visa Applications</h2>
+
+{% if applications %}
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
     {% for app in applications %}
-    <tr>
-        <td>{{ app.id }}</td>
-        <td>{{ app.full_name }}</td>
-        <td>{{ app.passport_number }}</td>
-        <td>{{ app.status }}</td>
-        <td>{{ app.submitted_at.strftime('%Y-%m-%d %H:%M') }}</td>
-        <td>
-            <form action="{{ url_for('update_status', app_id=app.id) }}" method="post">
-                <select name="status">
-                    <option value="pending" {% if app.status == 'pending' %}selected{% endif %}>Pending</option>
-                    <option value="approved" {% if app.status == 'approved' %}selected{% endif %}>Approved</option>
-                    <option value="rejected" {% if app.status == 'rejected' %}selected{% endif %}>Rejected</option>
-                </select><br>
-                <input type="text" name="rejection_reason" placeholder="Reason (if rejected)" value="{{ app.rejection_reason or '' }}">
-                <button type="submit">Update</button>
+      <div class="col">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">{{ app.full_name }}</h5>
+            <p class="card-text">
+              <strong>Passport:</strong> {{ app.passport_number }}<br>
+              <strong>Email:</strong> {{ app.email }}<br>
+              <strong>Phone:</strong> {{ app.phone }}<br>
+              <strong>Submitted:</strong> {{ app.submitted_at.strftime('%Y-%m-%d %H:%M') }}
+            </p>
+            <p>
+              <strong>Status:</strong>
+              <span class="badge 
+                {% if app.status == 'approved' %}bg-success
+                {% elif app.status == 'rejected' %}bg-danger
+                {% else %}bg-secondary
+                {% endif %}">
+                {{ app.status }}
+              </span>
+              {% if app.status == 'rejected' %}
+                <br><strong>Reason:</strong> {{ app.rejection_reason }}
+              {% endif %}
+            </p>
+            <p>
+              <strong>Photo:</strong> 
+              <a href="{{ url_for('static', filename='uploads/' ~ app.photo_filename) }}" target="_blank">View</a><br>
+              {% if app.document_filename %}
+                <strong>Document:</strong> 
+                <a href="{{ url_for('static', filename='uploads/' ~ app.document_filename) }}" target="_blank">View</a>
+              {% endif %}
+            </p>
+          </div>
+          <div class="card-footer bg-white border-top">
+            <form method="POST" action="{{ url_for('update_status', app_id=app.id) }}">
+              <div class="input-group">
+                <select class="form-select" name="status" required>
+                  <option value="" disabled selected>Change status...</option>
+                  <option value="approved">Approve</option>
+                  <option value="rejected">Reject</option>
+                </select>
+                <input class="form-control" name="rejection_reason" placeholder="Rejection reason (optional)">
+                <button class="btn btn-outline-primary" type="submit">Update</button>
+              </div>
             </form>
-        </td>
-    </tr>
+          </div>
+        </div>
+      </div>
     {% endfor %}
-</table>
+  </div>
+{% else %}
+  <p>No applications yet.</p>
+{% endif %}
 {% endblock %}

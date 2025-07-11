@@ -84,6 +84,16 @@ def check_status():
         result = application
     return render_template('check_status.html', result=result)
 
+#失败后重新上传
+@app.route('/reupload/<string:passport_number>', methods=['GET'])
+def reupload(passport_number):
+    application = VisaApplication.query.filter_by(passport_number=passport_number).first()
+    if not application:
+        flash("No application found for reupload")
+        return redirect(url_for('upload_page'))
+    flash("Please re-submit your application")
+    return redirect(url_for('upload_page'))
+
 #展示申请列别
 @app.route('/admin/applications')
 def admin_applications():
