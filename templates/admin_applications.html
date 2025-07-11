@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Admin Panel{% endblock %}
+{% block content %}
+<h2>Visa Applications - Admin Panel</h2>
+<table>
+    <tr>
+        <th>ID</th><th>Name</th><th>Passport</th><th>Status</th><th>Submitted</th><th>Actions</th>
+    </tr>
+    {% for app in applications %}
+    <tr>
+        <td>{{ app.id }}</td>
+        <td>{{ app.full_name }}</td>
+        <td>{{ app.passport_number }}</td>
+        <td>{{ app.status }}</td>
+        <td>{{ app.submitted_at.strftime('%Y-%m-%d %H:%M') }}</td>
+        <td>
+            <form action="{{ url_for('update_status', app_id=app.id) }}" method="post">
+                <select name="status">
+                    <option value="pending" {% if app.status == 'pending' %}selected{% endif %}>Pending</option>
+                    <option value="approved" {% if app.status == 'approved' %}selected{% endif %}>Approved</option>
+                    <option value="rejected" {% if app.status == 'rejected' %}selected{% endif %}>Rejected</option>
+                </select><br>
+                <input type="text" name="rejection_reason" placeholder="Reason (if rejected)" value="{{ app.rejection_reason or '' }}">
+                <button type="submit">Update</button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
