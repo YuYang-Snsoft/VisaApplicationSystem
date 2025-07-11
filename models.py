@@ -17,5 +17,10 @@ class VisaApplication(db.Model):
     rejection_reason = db.Column(db.Text, nullable=True)
     submitted_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+class CheckinRecord(db.Model):
+    id = db.Column(db.Integer,primary_key=True)
+    passport_number = db.Column(db.String(50),nullable=False)
+    checkin_time = db.Column(db.DateTime,default=datetime.utcnow)
+
     def __repr__(self):
         return f"<VisaApplication {self.passport_number}>"

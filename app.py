@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 import os
 from werkzeug.utils import secure_filename
-from models import db, VisaApplication
+from models import db, VisaApplication, CheckinRecord
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -113,3 +113,27 @@ def update_status(app_id):
     db.session.commit()
     flash(f'Status updated to {new_status}')
     return redirect(url_for('admin_applications'))
+
+#打卡系统
+@app.route('/checkin', methods=['GET', 'POST'])
+def checkin():
+    if request.method == 'POST':
+        passport_number = request.form['passport_number']
+        if not passport_number:
+            flash('Passport number is required')
+            return redirect(url_for('checkin'))
+
+        record = CheckinRecord(passport_number=passport_number)
+        db.session.add(record)
+        db.session.commit()
+
+        flash('Check-in successful!')
+        return redirect(url_for('checkin'))
+
+    return render_template('checkin.html')
+
+#打卡系统后台
+@app.route('/admin/checkins')
+def admin_checkins():
+    checkins = CheckinRecord.query.order_by(CheckinRecord.checkin_time.desc()).all()
+    return render_template('admin_checkins.html', checkins=checkins)

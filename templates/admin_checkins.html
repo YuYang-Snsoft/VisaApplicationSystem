@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Check-in Records{% endblock %}
+{% block content %}
+<h2>Check-in Records</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Passport Number</th>
+            <th>Check-in Time</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for record in checkins %}
+        <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ record.passport_number }}</td>
+            <td>{{ record.checkin_time.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

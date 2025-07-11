@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Check-in{% endblock %}
+{% block content %}
+<h2>Check-in</h2>
+<form method="POST">
+    <div class="mb-3">
+        <label class="form-label">Passport Number</label>
+        <input type="text" name="passport_number" class="form-control" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Check-in</button>
+</form>
+{% endblock %}
